@@ -1,0 +1,12 @@
+# Magnet Measurement
+## For a 0.75" long by 0.5" diameter cylindrical ferromagnet.
+### Purpose
+The purpose of taking these magnetic measurements was to characterize the field of a ferromagnet to assess whether an array of them would be sufficient to use for rudimentary Zeeman slowing of atoms and molecules.
+### The Measurement
+The measurements of the magnetic field were taken with a magnetometer purchased from Amazon.  The megnetometer has 2 different scale options, 200 mT and 2000 mT.  The setup was a mounted magnet on a 3D translation stage with a micrometer handle.  The probe tip was mounted to an adjacent post using tape against the flat edge of a clamp.  The data was taken by starting with the probe tip just touching the center of the magnet (adjustment of the X and Y axes to optimize).  Then the z-axis position of the probe (z-axis defined as the center axis of the cylindrical magnet) was increased in increments of 0.005" from z = 0" (the surface of the magnet) to a distance of z = 0.8".  Initially, the magnetometer was on the 2000 mT setting.  Once the probe tip was far enough from the magnet that the field dropped below 200 mT, the magnetometer was switched to the 200 mT range for the added precision.  I took a few overlap points (not included in the data) the ensure that there was no significant offset between the scales.  This data was taken twice with the only difference being the orientation of the probe tip.  The first set of data (hole in probe tip facing AWAY from the magnet) is stored in "b1.txt" and has units of mT.  The second set of data (hole facint TOWARDS the magnet) is stored in "b2.txt" and also has units of mT.
+### Pertinent Measurements
+Diameter of Magnet: 0.50"
+Length of Magnet: 0.75"
+Thickness of Probe Tip: 0.056"
+### Analysis
+Python3 was used for the analysis with the packages "numpy", "matplotlib", and "lmfit" being imported and used.  The equation used for the fit was obtained from http://www.scielo.org.mx/pdf/rmfe/v59n1/v59n1a2.pdf in the section on the B-Field from a cylindrical magnet along its z-axis (Equation 7).  For simplicity in the fit, the constants are absorbed into M.  Also, for the fit all distance units were converted to meters.
