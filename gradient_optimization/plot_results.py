@@ -36,7 +36,20 @@ plt.ylabel('Magnet distances')
 plt.subplot(2,2,4)
 
 pos = np.arange(0, len(zlocs))
-plt.bar(pos, D)
+
+thickness = []
+for k in range(len(zlocs)):
+    if k in [6,7,8]:
+        mycolor = 'r'        
+    else:        
+        mycolor = 'b'
+    if oris[k] > 0:
+        leg = 'N'
+    else:
+        leg = 'S'
+
+    plt.bar(pos[k], L[k], width = D[k]/40.0, color = mycolor)
+    plt.text(pos[k] - 0.125, L[k] + 1.0, leg)
 
 plt.show()
 
