@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from helper_functions import *
 
 f = open('store.pckl', 'rb')
-(ylocs, zlocs, B0, Bg, L0, shift_z_arr, B_arr, dBdz_arr, zlocs_arr, xoffset, zoffset, oris) = pickle.load(f)
+(ylocs, zlocs, B0, Bg, L0, shift_z_arr, B_arr, dBdz_arr, zlocs_arr, xoffset, oris) = pickle.load(f)
 
 ys = np.linspace(0, 300.0, 100.0) # in mm
 
@@ -35,9 +35,9 @@ plt.ylabel('Magnet distances')
 
 plt.subplot(2,2,4)
 
-pos = np.arange(0, len(zlocs))
+#pos = np.arange(0, len(zlocs))
 
-thickness = []
+pos = ylocs/10.0
 for k in range(len(zlocs)):
     if k in [6,7,8]:
         mycolor = 'r'        
@@ -48,7 +48,13 @@ for k in range(len(zlocs)):
     else:
         leg = 'S'
 
-    plt.bar(pos[k], L[k], width = D[k]/40.0, color = mycolor)
+    
+    plt.bar(pos[k], L[k], bottom = 0.0, width = D[k]/10.0, color = mycolor)
+    
+    my_offset = 60.0
+
+    plt.bar(pos[k], L[k], bottom = my_offset, width = D[k]/10.0, color = mycolor)
+    
     plt.text(pos[k] - 0.125, L[k] + 1.0, leg)
 
 plt.show()

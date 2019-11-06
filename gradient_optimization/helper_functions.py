@@ -13,7 +13,7 @@ def Cylmag(loc,ori,d,l,m):
     return magpy.source.magnet.Cylinder(mag=[0,0,ori*m],dim=[d,l],pos=loc)
 
 
-def get_bfield(ys, zlocs, ylocs, xoffset, zoffset, oris, return_magnets = False):
+def get_bfield(ys, zlocs, ylocs, xoffset, oris, return_magnets = False):
     sources = {}
 
     M = 6335.0/(4.0*1.26) * np.ones(len(zlocs))
@@ -23,18 +23,21 @@ def get_bfield(ys, zlocs, ylocs, xoffset, zoffset, oris, return_magnets = False)
     D[[0,1,11]] = 0.8 * 25.4
     L[[0,1,11]] = 0.8 * 25.4
 
+    # needs fixing
+    zoffset = 2.5/2 * 25.4 + L/2.0 # mm, radius of nipple plus half the magnet
+
     if return_magnets:
         return (M, D, L)
 
     for i in range(len(zlocs)):
         if i in range(6,9):
-            sources['{}tr'.format(i)] = Cylmag(loc=[xoffset,ylocs[i],zlocs[i]+zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
-            sources['{}br'.format(i)] = Cylmag(loc=[-xoffset,ylocs[i],zlocs[i]+zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
-            sources['{}tl'.format(i)] = Cylmag(loc=[xoffset,ylocs[i],-zlocs[i]-zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
-            sources['{}bl'.format(i)] = Cylmag(loc=[-xoffset,ylocs[i],-zlocs[i]-zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}tr'.format(i)] = Cylmag(loc=[xoffset,ylocs[i],zlocs[i]+zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}br'.format(i)] = Cylmag(loc=[-xoffset,ylocs[i],zlocs[i]+zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}tl'.format(i)] = Cylmag(loc=[xoffset,ylocs[i],-zlocs[i]-zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}bl'.format(i)] = Cylmag(loc=[-xoffset,ylocs[i],-zlocs[i]-zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
         else:
-            sources['{}r'.format(i)] = Cylmag(loc=[0,ylocs[i],zlocs[i]+zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
-            sources['{}l'.format(i)] = Cylmag(loc=[0,ylocs[i],-zlocs[i]-zoffset],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}r'.format(i)] = Cylmag(loc=[0,ylocs[i],zlocs[i]+zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
+            sources['{}l'.format(i)] = Cylmag(loc=[0,ylocs[i],-zlocs[i]-zoffset[i]],ori=oris[i], d = D[i], l = L[i], m = M[i])
 
     C = magpy.Collection()
 
@@ -47,29 +50,29 @@ def get_bfield(ys, zlocs, ylocs, xoffset, zoffset, oris, return_magnets = False)
     return BZy[:, 2]*10.0
 
 
-def get_grad(ylocs, zpos, xoffset, zoffset, oris, dz = 0.1):
+def get_grad(ylocs, zpos, xoffset, oris, dz = 0.1):
     dBdz = np.zeros(len(zpos))
     for k in range(len(zpos)):
 
         hlp = np.copy(zpos)
-        B1 = get_bfield(ylocs, hlp, ylocs, xoffset, zoffset, oris)
+        B1 = get_bfield(ylocs, hlp, ylocs, xoffset, oris)
 
         hlp[k] += dz
-        B2 = get_bfield(ylocs, hlp, ylocs, xoffset, zoffset, oris)
+        B2 = get_bfield(ylocs, hlp, ylocs, xoffset, oris)
     
         dBdz[k] = B2[k] - B1[k]
 
     return dBdz
 
 
-def do_iter(Bideal, ylocs, zlocs, xoffset, zoffset, oris, shift_z, dz = 0.1):
-    B = get_bfield(ylocs, zlocs, ylocs, xoffset, zoffset, oris)
-    dBdz = get_grad(ylocs, zlocs, xoffset, zoffset, oris, dz = dz)
+def do_iter(Bideal, ylocs, zlocs, xoffset, oris, shift_z, dz = 0.1):
+    B = get_bfield(ylocs, zlocs, ylocs, xoffset, oris)
+    dBdz = get_grad(ylocs, zlocs, xoffset, oris, dz = dz)
     diffs = Bideal - B
 
     delta = np.sign(diffs) * dBdz * shift_z
 
-    Bnew = get_bfield(ylocs, zlocs + delta, ylocs, xoffset, zoffset, oris)
+    Bnew = get_bfield(ylocs, zlocs + delta, ylocs, xoffset, oris)
     new_diffs = Bideal - Bnew
 
     # check if we need to decrease the step size
@@ -79,8 +82,8 @@ def do_iter(Bideal, ylocs, zlocs, xoffset, zoffset, oris, shift_z, dz = 0.1):
             shift_z[k] *= 0.5
 
     delta_final = np.sign(diffs) * dBdz * shift_z
-    B_final = get_bfield(ylocs, zlocs + delta_final, ylocs, xoffset, zoffset, oris)
-    dBdz_final = get_grad(ylocs, zlocs + delta_final, xoffset, zoffset, oris, dz = dz)
+    B_final = get_bfield(ylocs, zlocs + delta_final, ylocs, xoffset, oris)
+    dBdz_final = get_grad(ylocs, zlocs + delta_final, xoffset, oris, dz = dz)
 
     return (delta, shift_z, B_final, dBdz_final)
 

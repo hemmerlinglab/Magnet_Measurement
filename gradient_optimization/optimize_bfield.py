@@ -18,7 +18,8 @@ B0 = 537.0 # Gs
 L0 = 26.6 # cm
 Bg = B0/2 # Gs
 
-zoffset = (2.5/2+.375)*25.4 # mm, radius of nipple plus half the magnet
+#zoffset = (2.5/2+.375)*25.4 # mm, radius of nipple plus half the magnet
+
 xoffset = .25*25.4 # mm, magnet radius for double stacked
 
 oris = [1,1,1,1,1,1,1,1,-1,-1,-1, -1] # orientation of magnets
@@ -41,7 +42,7 @@ zlocs_arr = np.zeros([len(zlocs), no_of_iterations])
 for k in range(no_of_iterations):
     print(k)
 
-    (delta, shift_z, B, dBdz) = do_iter(Bideal, ylocs, zlocs, xoffset, zoffset, oris, shift_z)
+    (delta, shift_z, B, dBdz) = do_iter(Bideal, ylocs, zlocs, xoffset, oris, shift_z)
     zlocs += delta
 
     ind = np.where(zlocs < 0.0)
@@ -56,7 +57,7 @@ for k in range(no_of_iterations):
 
 
 f = open('store.pckl', 'wb')
-pickle.dump([ylocs, zlocs, B0, Bg, L0, shift_z_arr, B_arr, dBdz_arr, zlocs_arr, xoffset, zoffset, oris], f)
+pickle.dump([ylocs, zlocs, B0, Bg, L0, shift_z_arr, B_arr, dBdz_arr, zlocs_arr, xoffset, oris], f)
 f.close()
 
 
