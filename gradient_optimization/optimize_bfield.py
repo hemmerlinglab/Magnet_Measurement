@@ -30,7 +30,7 @@ zlocs = np.zeros(len(oris))
 ylocs = np.arange(0,len(zlocs))*25.4 # mm, beam line locations
 
 shift_z = 10.0 * np.ones(len(zlocs))
-no_of_iterations = 30
+no_of_iterations = 60
 
 Bideal = get_ideal_field(ylocs, B0, Bg, L0)
 
