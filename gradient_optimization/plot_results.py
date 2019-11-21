@@ -11,7 +11,7 @@ ys = np.linspace(0, 300.0, 100.0) # in mm
 
 Bfield = get_ideal_field(ys, B0, Bg, L0)
 
-(M, D, L) = get_bfield(ys, zlocs, ylocs, xoffset, zoffset, oris, return_magnets = True)
+(M, D, L) = get_bfield(ys, zlocs, ylocs, xoffset, oris, return_magnets = True)
 
 plt.figure()
 plt.subplot(2,2,1)
@@ -20,7 +20,7 @@ plt.plot(ys, Bfield, 'r--')
 
 plt.subplot(2,2,2)
 plt.plot(ys, Bfield, 'r--')
-plt.plot(ys, get_bfield(ys, zlocs, ylocs, xoffset, zoffset, oris), 'b')
+plt.plot(ys, get_bfield(ys, zlocs, ylocs, xoffset, oris), 'b')
 
 plt.subplot(2,2,3)
 plt.bar(np.arange(0,len(zlocs)), zlocs_arr[:, -1])
