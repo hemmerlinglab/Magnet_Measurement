@@ -47,7 +47,7 @@ def fcn2min(params,x,data,plot_fit=False):
 
 def fit_B(x,y):
 	params = Parameters()
-	params.add('M',value=1e9,min=0,max=1e12,vary=True)
+	params.add('M',value=8000,min=0,max=1e6,vary=True)
 	params.add('a',value=prb,min=-1,max=1,vary=True)
 	params.add('offset',value=0,min=-1,max=1,vary=False)
 	#params.add('y_offset',value=0,min=-1e4,max=1e4,vary=True)
